@@ -296,14 +296,11 @@ endif
 	ex	de,hl			; DE = target slot buffer address (HL = garbage)
 
 	; calculate the CP/M sector offset address (disk_sec*128)
+	; lsb=Least Significant Bit, msb=Most Significant Bit
 	pop	hl			; HL=CP/M sector number, must be 0..3
-	add	hl,hl			; HL *= 2
-	add	hl,hl			; HL *= 4
-	add	hl,hl			; HL *= 8
-	add	hl,hl			; HL *= 16
-	add	hl,hl			; HL *= 32
-	add	hl,hl			; HL *= 64
-	add	hl,hl			; HL *= 128
+	srl	l              		; Save lsb in carry and shift 2nd-most lsb right
+  	ld	h, l           		; Move value of shifted 2nd-most lsb into H
+  	rr	l              		; Move carry to msb of L
 
 	; calculate the address of the CP/M sector in the .bios_sdbuf
 	add	hl,de			; HL = @ of cpm sector in the cache
